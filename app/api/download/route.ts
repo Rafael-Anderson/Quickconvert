@@ -381,7 +381,7 @@ function killProcessTree(pid: number | undefined): void {
   if (process.platform === "win32") {
     // taskkill's /t recurses the whole descendant tree; doesn't depend on
     // how the process was spawned, so this works regardless of `detached`.
-    spawn("taskkill", ["/pid", String(pid), "/t", "/f"], { shell: false });
+    spawn("taskkill", ["/pid", String(pid), "/t", "/f"], { shell: false, windowsHide: true });
   } else {
     try {
       // Negative pid signals the whole process group rather than just the
@@ -423,6 +423,7 @@ function runChild(
       env: childEnv(),
       shell: false,
       detached: process.platform !== "win32",
+      windowsHide: true,
     });
     let stdout = "";
     let stderr = "";
@@ -535,6 +536,7 @@ function runFfprobeCapture(args: string[], timeoutMs = 30_000, signal?: AbortSig
       env: childEnv(),
       shell: false,
       detached: process.platform !== "win32",
+      windowsHide: true,
     });
     let stdout = "";
     let stderr = "";
@@ -596,7 +598,7 @@ let aria2cAvailabilityPromise: Promise<boolean> | null = null;
 function isAria2cAvailable(): Promise<boolean> {
   if (!aria2cAvailabilityPromise) {
     aria2cAvailabilityPromise = new Promise<boolean>((resolve) => {
-      const probe = spawn(ARIA2C_BIN, ["--version"], { env: childEnv(), shell: false });
+      const probe = spawn(ARIA2C_BIN, ["--version"], { env: childEnv(), shell: false, windowsHide: true });
       let settled = false;
       const finish = (ok: boolean) => {
         if (!settled) {
