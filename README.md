@@ -1,6 +1,6 @@
 # Media Downloader (local-only)
 
-A minimal **Next.js 14** (App Router, TypeScript) app that downloads audio or
+A minimal **Next.js 15** (App Router, TypeScript) app that downloads audio or
 video from a URL. Everything runs on your own machine — the backend shells out
 to [`yt-dlp`](https://github.com/yt-dlp/yt-dlp) and [`ffmpeg`](https://ffmpeg.org/)
 directly (no npm wrappers), writes to a temp file, then streams it back to your
@@ -66,7 +66,7 @@ winget install yt-dlp.yt-dlp
 winget install Gyan.FFmpeg
 ```
 
-Also required: **Node.js 18.17+** (Next.js 14 minimum).
+Also required: **Node.js 18.17+** (Next.js 15 minimum).
 
 ### Keeping yt-dlp updated
 

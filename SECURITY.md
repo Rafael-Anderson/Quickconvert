@@ -123,7 +123,7 @@ applying the commands above.
 If you find a security issue in QuickExtract, please **do not open a public
 GitHub issue**. Email:
 
-**`[SECURITY CONTACT EMAIL — fill in before publishing this document]`**
+**`rohaan18069dxb@gmail.com`**
 
 with a description of the issue and, if possible, steps to reproduce it.
 Public issues for unpatched vulnerabilities put every deployment at risk in
