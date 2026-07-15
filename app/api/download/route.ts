@@ -1630,7 +1630,12 @@ async function handleDownload(
   quality: string
 ): Promise<Response> {
   // --- Download to an isolated temp dir ---
-  const dir = await mkdtemp(join(tmpdir(), "ytdl-"));
+  let dir: string;
+  try {
+    dir = await mkdtemp(join(tmpdir(), "ytdl-"));
+  } catch {
+    return jsonError("Could not create a temp directory for the download.", 500);
+  }
   const cleanup = () => {
     rm(dir, { recursive: true, force: true }).catch(() => {
       /* best-effort */
@@ -1861,7 +1866,13 @@ async function handleDownload(
       : await probeAudioQuality(filePath, req.signal)) ?? "unknown";
   console.log(`[download] final output quality (${source}, ${format}): ${quality_}`);
 
-  const { size } = await stat(filePath);
+  let size: number;
+  try {
+    ({ size } = await stat(filePath));
+  } catch {
+    cleanup();
+    return jsonError("Could not read the downloaded file.", 500);
+  }
   const downloadName = sanitizeFilename(files[0]);
   // HTTP header values must be Latin-1 (bytes 0-255). Titles often contain
   // characters outside that range, which would make `new Response(...)`
