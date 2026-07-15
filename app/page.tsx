@@ -254,7 +254,14 @@ export default function Home() {
       <GridPattern />
       <main className="card relative overflow-hidden">
         {(loading || progress > 0) && (
-          <div className="absolute left-0 top-0 h-1 w-full bg-[var(--border)]">
+          <div
+            className="absolute left-0 top-0 h-1 w-full bg-[var(--border)]"
+            role="progressbar"
+            aria-label="Download progress"
+            aria-valuenow={Math.round(progress)}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
             <div
               className="h-full bg-[var(--accent)] transition-all duration-150 ease-out"
               style={{ width: `${progress}%` }}
@@ -262,9 +269,11 @@ export default function Home() {
           </div>
         )}
         <div className="flex items-center gap-6">
+          {/* alt="" (decorative): the adjacent <h1> already names the app,
+              so alt text here would double-announce "Quick Extract". */}
           <img
             src="/logo.png"
-            alt="Quick Extract"
+            alt=""
             className="h-32 w-32 object-contain mix-blend-lighten shrink-0"
           />
           <div className="flex-1 min-w-0 max-w-none">
@@ -291,8 +300,8 @@ export default function Home() {
           </div>
 
           <div className="field">
-            <span className="label">Kind</span>
-            <div className="radio-group">
+            <span className="label" id="kind-label">Kind</span>
+            <div className="radio-group" role="radiogroup" aria-labelledby="kind-label">
               <label className={`radio ${kind === "video" ? "active" : ""}`}>
                 <input
                   type="radio"
@@ -368,11 +377,13 @@ export default function Home() {
           </button>
         </form>
 
-        {error && <div className="alert error">{error}</div>}
-        {success && <div className="alert success">{success}</div>}
+        {/* role="alert" = assertive live region; role="status" = polite.
+            Both announce on mount even though they're conditionally rendered. */}
+        {error && <div className="alert error" role="alert">{error}</div>}
+        {success && <div className="alert success" role="status">{success}</div>}
 
         {loading && (
-          <p className="hint">
+          <p className="hint" role="status">
             This can take a while for long videos — keep this tab open.
           </p>
         )}
