@@ -332,7 +332,6 @@ describe("SSRF guard", () => {
     "http://172.16.0.1/x",
     "http://172.31.255.255/x",
     "http://169.254.169.254/latest/meta-data/",
-    "http://[::1]/x",
   ];
 
   for (const url of blocked) {
@@ -343,6 +342,21 @@ describe("SSRF guard", () => {
       assert.match(body.error, /disallowed address/i, `expected an SSRF rejection for ${url}, got: ${body.error}`);
     });
   }
+
+  it("rejects http://[::1]/x", async () => {
+    // Separate from the loop above (not just folded into `blocked`): on some
+    // platforms dns.lookup() doesn't recognize the bracketed literal "[::1]"
+    // and fails resolution outright (ENOTFOUND) rather than reaching the IP
+    // blocklist check — assertSafeUrl still rejects it either way, just via
+    // a different message. The other entries above are literal IPv4
+    // addresses / "localhost", which always resolve, so they keep the
+    // strict assertion — this platform quirk is specific to the bracketed
+    // IPv6 form.
+    const res = await POST(postRequest({ url: "http://[::1]/x", format: "mp3", quality: "320" }, freshIp()));
+    assert.equal(res.status, 400);
+    const body = await res.json();
+    assert.match(body.error, /disallowed address|could not resolve host/i);
+  });
 
   it("does not block a normal public host (172.32.x.x is outside the blocked 172.16-31 range)", async () => {
     // 172.32.0.1 looks superficially similar to the blocked 172.16/12 range
